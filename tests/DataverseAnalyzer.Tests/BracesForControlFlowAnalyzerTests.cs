@@ -185,6 +185,27 @@ public sealed class BracesForControlFlowAnalyzerTests
         Assert.Empty(diagnostics);
     }
 
+    [Fact]
+    public async Task IfStatementWithAssignmentShouldTrigger()
+    {
+        var source = """
+            class TestClass
+            {
+                public void TestMethod()
+                {
+                    var bla = string.Empty;
+
+                    if (true)
+                        bla = "bla";
+                }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Single(diagnostics);
+        Assert.Equal("CT0001", diagnostics[0].Id);
+    }
+
     private static async Task<Diagnostic[]> GetDiagnosticsAsync(string source)
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(source);
