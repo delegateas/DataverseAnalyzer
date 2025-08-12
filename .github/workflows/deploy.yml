@@ -1,0 +1,48 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Format code
+      run: dotnet format --verify-no-changes
+    
+    - name: Build solution
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Run tests
+      run: dotnet test --configuration Release --no-build --verbosity normal
+    
+    - name: Extract version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+    
+    - name: Pack analyzer
+      run: dotnet pack --configuration Release --no-build --output ./artifacts -p:PackageVersion=${{ steps.get_version.outputs.VERSION }}
+    
+    - name: Publish to NuGet
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      
+    - name: Upload release artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-artifacts
+        path: ./artifacts/*.nupkg
