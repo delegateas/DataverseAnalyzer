@@ -27,10 +27,6 @@ public sealed class BracesForControlFlowAnalyzer : DiagnosticAnalyzer
         context.EnableConcurrentExecution();
         context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         context.RegisterSyntaxNodeAction(AnalyzeElseClause, SyntaxKind.ElseClause);
-        context.RegisterSyntaxNodeAction(AnalyzeForStatement, SyntaxKind.ForStatement);
-        context.RegisterSyntaxNodeAction(AnalyzeForEachStatement, SyntaxKind.ForEachStatement);
-        context.RegisterSyntaxNodeAction(AnalyzeWhileStatement, SyntaxKind.WhileStatement);
-        context.RegisterSyntaxNodeAction(AnalyzeDoStatement, SyntaxKind.DoStatement);
     }
 
     private static void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
@@ -46,30 +42,6 @@ public sealed class BracesForControlFlowAnalyzer : DiagnosticAnalyzer
         {
             AnalyzeEmbeddedStatement(context, elseClause.Statement);
         }
-    }
-
-    private static void AnalyzeForStatement(SyntaxNodeAnalysisContext context)
-    {
-        var forStatement = (ForStatementSyntax)context.Node;
-        AnalyzeEmbeddedStatement(context, forStatement.Statement);
-    }
-
-    private static void AnalyzeForEachStatement(SyntaxNodeAnalysisContext context)
-    {
-        var forEachStatement = (ForEachStatementSyntax)context.Node;
-        AnalyzeEmbeddedStatement(context, forEachStatement.Statement);
-    }
-
-    private static void AnalyzeWhileStatement(SyntaxNodeAnalysisContext context)
-    {
-        var whileStatement = (WhileStatementSyntax)context.Node;
-        AnalyzeEmbeddedStatement(context, whileStatement.Statement);
-    }
-
-    private static void AnalyzeDoStatement(SyntaxNodeAnalysisContext context)
-    {
-        var doStatement = (DoStatementSyntax)context.Node;
-        AnalyzeEmbeddedStatement(context, doStatement.Statement);
     }
 
     private static void AnalyzeEmbeddedStatement(SyntaxNodeAnalysisContext context, StatementSyntax statement)

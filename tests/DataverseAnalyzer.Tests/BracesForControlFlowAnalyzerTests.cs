@@ -126,44 +126,6 @@ public sealed class BracesForControlFlowAnalyzerTests
     }
 
     [Fact]
-    public async Task ForStatementWithAssignmentShouldTrigger()
-    {
-        var source = """
-            class TestClass
-            {
-                public void TestMethod()
-                {
-                    int x = 0;
-                    for (int i = 0; i < 10; i++)
-                        x = i;
-                }
-            }
-            """;
-
-        var diagnostics = await GetDiagnosticsAsync(source);
-        Assert.Single(diagnostics);
-        Assert.Equal("CT0001", diagnostics[0].Id);
-    }
-
-    [Fact]
-    public async Task WhileStatementWithReturnShouldNotTrigger()
-    {
-        var source = """
-            class TestClass
-            {
-                public void TestMethod()
-                {
-                    while (true)
-                        return;
-                }
-            }
-            """;
-
-        var diagnostics = await GetDiagnosticsAsync(source);
-        Assert.Empty(diagnostics);
-    }
-
-    [Fact]
     public async Task IfStatementWithBracesShouldNotTrigger()
     {
         var source = """

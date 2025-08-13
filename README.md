@@ -4,7 +4,7 @@ A Roslyn analyzer for .NET Core projects that enforces specific control flow bra
 
 ## Rule CT0001: Control Flow Braces Rule
 
-This analyzer enforces that control flow statements without braces can only contain:
+This analyzer enforces that `if` and `else` control flow statements without braces can only contain:
 - `return` statements
 - `throw` statements  
 - `continue` statements
@@ -36,10 +36,6 @@ if (done)
 // This will trigger CT0001
 if (condition)
     DoSomething();
-
-// This will trigger CT0001  
-for (int i = 0; i < 10; i++)
-    x = i;
 ```
 
 ## Usage
