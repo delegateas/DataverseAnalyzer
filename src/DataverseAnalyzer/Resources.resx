@@ -70,4 +70,13 @@
   <data name="CT0001_CodeFix_Title" xml:space="preserve">
     <value>Add braces</value>
   </data>
+  <data name="CT0002_Title" xml:space="preserve">
+    <value>Enum properties should not be assigned literal values</value>
+  </data>
+  <data name="CT0002_MessageFormat" xml:space="preserve">
+    <value>Enum property '{0}' should not be assigned literal value '{1}'. Use the appropriate enum value instead</value>
+  </data>
+  <data name="CT0002_Description" xml:space="preserve">
+    <value>Enum properties should be assigned enum values rather than literal numeric values to improve code readability and maintainability.</value>
+  </data>
 </root>
