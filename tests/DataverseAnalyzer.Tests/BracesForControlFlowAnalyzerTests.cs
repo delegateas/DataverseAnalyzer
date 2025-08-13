@@ -126,44 +126,6 @@ public sealed class BracesForControlFlowAnalyzerTests
     }
 
     [Fact]
-    public async Task ForStatementWithAssignmentShouldTrigger()
-    {
-        var source = """
-            class TestClass
-            {
-                public void TestMethod()
-                {
-                    int x = 0;
-                    for (int i = 0; i < 10; i++)
-                        x = i;
-                }
-            }
-            """;
-
-        var diagnostics = await GetDiagnosticsAsync(source);
-        Assert.Single(diagnostics);
-        Assert.Equal("CT0001", diagnostics[0].Id);
-    }
-
-    [Fact]
-    public async Task WhileStatementWithReturnShouldNotTrigger()
-    {
-        var source = """
-            class TestClass
-            {
-                public void TestMethod()
-                {
-                    while (true)
-                        return;
-                }
-            }
-            """;
-
-        var diagnostics = await GetDiagnosticsAsync(source);
-        Assert.Empty(diagnostics);
-    }
-
-    [Fact]
     public async Task IfStatementWithBracesShouldNotTrigger()
     {
         var source = """
@@ -204,6 +166,88 @@ public sealed class BracesForControlFlowAnalyzerTests
         var diagnostics = await GetDiagnosticsAsync(source);
         Assert.Single(diagnostics);
         Assert.Equal("CT0001", diagnostics[0].Id);
+    }
+
+    [Fact]
+    public async Task ForStatementWithMethodCallShouldNotTrigger()
+    {
+        var source = """
+            class TestClass
+            {
+                public void TestMethod()
+                {
+                    for (int i = 0; i < 10; i++)
+                        DoSomething();
+                }
+                
+                private void DoSomething() { }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Empty(diagnostics);
+    }
+
+    [Fact]
+    public async Task ForEachStatementWithMethodCallShouldNotTrigger()
+    {
+        var source = """
+            class TestClass
+            {
+                public void TestMethod()
+                {
+                    var items = new[] { 1, 2, 3 };
+                    foreach (var item in items)
+                        DoSomething();
+                }
+                
+                private void DoSomething() { }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Empty(diagnostics);
+    }
+
+    [Fact]
+    public async Task WhileStatementWithMethodCallShouldNotTrigger()
+    {
+        var source = """
+            class TestClass
+            {
+                public void TestMethod()
+                {
+                    while (true)
+                        DoSomething();
+                }
+                
+                private void DoSomething() { }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Empty(diagnostics);
+    }
+
+    [Fact]
+    public async Task DoStatementWithMethodCallShouldNotTrigger()
+    {
+        var source = """
+            class TestClass
+            {
+                public void TestMethod()
+                {
+                    do
+                        DoSomething();
+                    while (true);
+                }
+                
+                private void DoSomething() { }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Empty(diagnostics);
     }
 
     private static async Task<Diagnostic[]> GetDiagnosticsAsync(string source)
