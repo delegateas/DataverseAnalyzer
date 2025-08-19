@@ -9,14 +9,16 @@ namespace DataverseAnalyzer;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class ObjectInitializationAnalyzer : DiagnosticAnalyzer
 {
-    public static readonly DiagnosticDescriptor Rule = new(
+    private static readonly Lazy<DiagnosticDescriptor> LazyRule = new(() => new DiagnosticDescriptor(
         "CT0003",
         Resources.CT0003_Title,
         Resources.CT0003_MessageFormat,
         "Style",
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: Resources.CT0003_Description);
+        description: Resources.CT0003_Description));
+
+    public static DiagnosticDescriptor Rule => LazyRule.Value;
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
