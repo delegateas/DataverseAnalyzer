@@ -9,14 +9,16 @@ namespace DataverseAnalyzer;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class BracesForControlFlowAnalyzer : DiagnosticAnalyzer
 {
-    public static readonly DiagnosticDescriptor Rule = new(
+    private static readonly Lazy<DiagnosticDescriptor> LazyRule = new(() => new DiagnosticDescriptor(
         "CT0001",
         Resources.CT0001_Title,
         Resources.CT0001_MessageFormat,
         "Style",
         DiagnosticSeverity.Error,
         isEnabledByDefault: true,
-        description: Resources.CT0001_Description);
+        description: Resources.CT0001_Description));
+
+    public static DiagnosticDescriptor Rule => LazyRule.Value;
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
