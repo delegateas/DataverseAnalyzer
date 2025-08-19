@@ -79,4 +79,13 @@
   <data name="CT0002_Description" xml:space="preserve">
     <value>Enum properties should be assigned enum values rather than literal numeric values to improve code readability and maintainability.</value>
   </data>
+  <data name="CT0003_Title" xml:space="preserve">
+    <value>Remove empty parentheses from object initialization</value>
+  </data>
+  <data name="CT0003_MessageFormat" xml:space="preserve">
+    <value>Object initialization should not use empty parentheses. Remove '()' from 'new {0}()' when using object initializer</value>
+  </data>
+  <data name="CT0003_Description" xml:space="preserve">
+    <value>Object initialization with empty parentheses followed by an initializer is unnecessary and should be avoided for cleaner code.</value>
+  </data>
 </root>

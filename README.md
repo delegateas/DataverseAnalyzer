@@ -1,6 +1,6 @@
 # Dataverse Analyzer
 
-A Roslyn analyzer for .NET Core projects that enforces specific control flow braces rules.
+A Roslyn analyzer for .NET Core projects that enforces specific coding standards and best practices.
 
 ## Rule CT0001: Control Flow Braces Rule
 
@@ -38,9 +38,54 @@ if (condition)
     DoSomething();
 ```
 
+## Rule CT0002: Enum Assignment Rule
+
+This analyzer prevents assigning literal values to enum properties, requiring the use of proper enum values instead.
+
+### Examples
+
+✅ **Allowed**:
+```csharp
+AccountCategoryCode = AccountCategoryCode.Standard;
+```
+
+❌ **Not allowed**:
+```csharp
+// This will trigger CT0002
+AccountCategoryCode = 1;
+```
+
+## Rule CT0003: Object Initialization Rule
+
+This analyzer prevents the use of empty parentheses in object initialization when using object initializers.
+
+### Examples
+
+✅ **Allowed**:
+```csharp
+var account = new Account
+{
+    Name = "MoneyMan",
+};
+
+var account = new Account(accountId)
+{
+    Name = "MoneyMan",
+};
+```
+
+❌ **Not allowed**:
+```csharp
+// This will trigger CT0003
+var account = new Account()
+{
+    Name = "MoneyMan",
+};
+```
+
 ## Usage
 
-The analyzer is designed to be consumed as a project reference or NuGet package in other .NET projects. When integrated, it will automatically analyze your code and report violations of rule CT0001.
+The analyzer is designed to be consumed as a project reference or NuGet package in other .NET projects. When integrated, it will automatically analyze your code and report violations of the rules.
 
 ### Building
 
