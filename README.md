@@ -93,7 +93,7 @@ The analyzer is designed to be consumed as a project reference or NuGet package 
 dotnet build src\DataverseAnalyzer\DataverseAnalyzer.csproj --configuration Release
 ```
 
-The built analyzer DLL will be available in `src\DataverseAnalyzer\bin\Release\net8.0\DataverseAnalyzer.dll`.
+The built analyzer DLL will be available in `src\DataverseAnalyzer\bin\Release\netstandard2.0\DataverseAnalyzer.dll`.
 
 ## Integration
 
