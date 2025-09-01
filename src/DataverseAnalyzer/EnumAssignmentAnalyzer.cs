@@ -52,8 +52,20 @@ public sealed class EnumAssignmentAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeEnumAssignmentForProperty(SyntaxNodeAnalysisContext context, PropertyDeclarationSyntax property, ExpressionSyntax right)
     {
-        // Check if the right side is a numeric literal
-        if (right is not LiteralExpressionSyntax literal || !IsNumericLiteral(literal))
+        LiteralExpressionSyntax literal;
+
+        // Check if the right side is a numeric literal or a cast expression with a numeric literal
+        if (right is LiteralExpressionSyntax directLiteral && IsNumericLiteral(directLiteral))
+        {
+            literal = directLiteral;
+        }
+        else if (right is CastExpressionSyntax castExpr &&
+                 castExpr.Expression is LiteralExpressionSyntax castLiteral &&
+                 IsNumericLiteral(castLiteral))
+        {
+            literal = castLiteral;
+        }
+        else
         {
             return;
         }
@@ -88,8 +100,20 @@ public sealed class EnumAssignmentAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeEnumAssignment(SyntaxNodeAnalysisContext context, SyntaxNode left, ExpressionSyntax right)
     {
-        // Check if the right side is a numeric literal
-        if (right is not LiteralExpressionSyntax literal || !IsNumericLiteral(literal))
+        LiteralExpressionSyntax literal;
+
+        // Check if the right side is a numeric literal or a cast expression with a numeric literal
+        if (right is LiteralExpressionSyntax directLiteral && IsNumericLiteral(directLiteral))
+        {
+            literal = directLiteral;
+        }
+        else if (right is CastExpressionSyntax castExpr &&
+                 castExpr.Expression is LiteralExpressionSyntax castLiteral &&
+                 IsNumericLiteral(castLiteral))
+        {
+            literal = castLiteral;
+        }
+        else
         {
             return;
         }

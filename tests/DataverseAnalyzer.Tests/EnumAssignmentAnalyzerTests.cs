@@ -197,7 +197,7 @@ public sealed class EnumAssignmentAnalyzerTests
     }
 
     [Fact]
-    public async Task EnumPropertyAssignedCastShouldNotTrigger()
+    public async Task EnumPropertyAssignedCastShouldTrigger()
     {
         var source = """
             public enum Status
@@ -213,6 +213,110 @@ public sealed class EnumAssignmentAnalyzerTests
                 public void TestMethod()
                 {
                     Status = (Status)1;
+                }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Single(diagnostics);
+        Assert.Equal("CT0002", diagnostics[0].Id);
+    }
+
+    [Fact]
+    public async Task EnumCastWithDataverseNamingPatternShouldTrigger()
+    {
+        var source = """
+            public enum demo_Entity_statuscode
+            {
+                ValidStatus = 1,
+                InvalidStatus = 2
+            }
+
+            class TestClass
+            {
+                public demo_Entity_statuscode statuscode { get; set; }
+
+                public void TestMethod()
+                {
+                    statuscode = (demo_Entity_statuscode)3;
+                }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Single(diagnostics);
+        Assert.Equal("CT0002", diagnostics[0].Id);
+    }
+
+    [Fact]
+    public async Task PropertyInitializerWithCastShouldTrigger()
+    {
+        var source = """
+            public enum Priority
+            {
+                Low = 1,
+                High = 2
+            }
+
+            class TestClass
+            {
+                public Priority Priority { get; set; } = (Priority)1;
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Single(diagnostics);
+        Assert.Equal("CT0002", diagnostics[0].Id);
+    }
+
+    [Fact]
+    public async Task MemberAccessEnumAssignedCastShouldTrigger()
+    {
+        var source = """
+            public enum AccountCategoryCode
+            {
+                Standard = 1,
+                Preferred = 2
+            }
+
+            class Account
+            {
+                public AccountCategoryCode? AccountCategoryCode { get; set; }
+            }
+
+            class TestClass
+            {
+                public void TestMethod()
+                {
+                    var account = new Account();
+                    account.AccountCategoryCode = (AccountCategoryCode)2;
+                }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Single(diagnostics);
+        Assert.Equal("CT0002", diagnostics[0].Id);
+    }
+
+    [Fact]
+    public async Task EnumCastFromVariableShouldNotTrigger()
+    {
+        var source = """
+            public enum Status
+            {
+                Active = 1,
+                Inactive = 2
+            }
+
+            class TestClass
+            {
+                public Status Status { get; set; }
+
+                public void TestMethod()
+                {
+                    var value = 1;
+                    Status = (Status)value;
                 }
             }
             """;
