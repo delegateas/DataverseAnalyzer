@@ -88,4 +88,16 @@
   <data name="CT0003_Description" xml:space="preserve">
     <value>Object initialization with empty parentheses followed by an initializer is unnecessary and should be avoided for cleaner code.</value>
   </data>
+  <data name="CT0004_Title" xml:space="preserve">
+    <value>Control flow statement with braces containing only control flow should not have braces</value>
+  </data>
+  <data name="CT0004_MessageFormat" xml:space="preserve">
+    <value>Block containing only a control flow statement (return, throw, continue, break, or yield break) should not have braces</value>
+  </data>
+  <data name="CT0004_Description" xml:space="preserve">
+    <value>When a block contains only a single control flow statement, braces should be omitted to improve code readability and consistency.</value>
+  </data>
+  <data name="CT0004_CodeFix_Title" xml:space="preserve">
+    <value>Remove braces</value>
+  </data>
 </root>
