@@ -205,7 +205,7 @@ public sealed class NoBracesForControlFlowAnalyzerTests
     }
 
     [Fact]
-    public async Task ElseClauseWithOnlyReturnShouldTrigger()
+    public async Task ElseClauseWithOnlyReturnShouldNotTrigger()
     {
         var source = """
             class TestClass
@@ -223,12 +223,11 @@ public sealed class NoBracesForControlFlowAnalyzerTests
             """;
 
         var diagnostics = await GetDiagnosticsAsync(source);
-        Assert.Single(diagnostics);
-        Assert.Equal("CT0004", diagnostics[0].Id);
+        Assert.Empty(diagnostics);
     }
 
     [Fact]
-    public async Task ElseIfShouldNotTrigger()
+    public async Task IfWithElseIfShouldNotTrigger()
     {
         var source = """
             class TestClass
@@ -248,7 +247,7 @@ public sealed class NoBracesForControlFlowAnalyzerTests
             """;
 
         var diagnostics = await GetDiagnosticsAsync(source);
-        Assert.Equal(2, diagnostics.Length);
+        Assert.Empty(diagnostics);
     }
 
     [Fact]
@@ -284,6 +283,34 @@ public sealed class NoBracesForControlFlowAnalyzerTests
                     {
                     }
                 }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Empty(diagnostics);
+    }
+
+    [Fact]
+    public async Task IfElseWithMultipleStatementsInIfAndSingleControlFlowInElseShouldNotTrigger()
+    {
+        var source = """
+            class TestClass
+            {
+                public void TestMethod(bool condition)
+                {
+                    if (condition)
+                    {
+                        DoSomething();
+                        DoSomethingElse();
+                    }
+                    else
+                    {
+                        throw new System.Exception();
+                    }
+                }
+                
+                private void DoSomething() { }
+                private void DoSomethingElse() { }
             }
             """;
 

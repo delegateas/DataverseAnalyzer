@@ -32,22 +32,22 @@ public sealed class NoBracesForControlFlowAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
         context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-        context.RegisterSyntaxNodeAction(AnalyzeElseClause, SyntaxKind.ElseClause);
     }
 
     private static void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
     {
         var ifStatement = (IfStatementSyntax)context.Node;
-        AnalyzeEmbeddedStatement(context, ifStatement.Statement);
-    }
-
-    private static void AnalyzeElseClause(SyntaxNodeAnalysisContext context)
-    {
-        var elseClause = (ElseClauseSyntax)context.Node;
-        if (elseClause.Statement is not IfStatementSyntax)
+        if (ifStatement.Else is not null)
         {
-            AnalyzeEmbeddedStatement(context, elseClause.Statement);
+            return;
         }
+
+        if (ifStatement.Parent is ElseClauseSyntax)
+        {
+            return;
+        }
+
+        AnalyzeEmbeddedStatement(context, ifStatement.Statement);
     }
 
     private static void AnalyzeEmbeddedStatement(SyntaxNodeAnalysisContext context, StatementSyntax statement)
