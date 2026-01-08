@@ -41,5 +41,11 @@ internal static class Resources
 
     internal static string CT0005_Description => GetString(nameof(CT0005_Description));
 
+    internal static string CT0006_Title => GetString(nameof(CT0006_Title));
+
+    internal static string CT0006_MessageFormat => GetString(nameof(CT0006_MessageFormat));
+
+    internal static string CT0006_Description => GetString(nameof(CT0006_Description));
+
     private static string GetString(string name) => ResourceManager.GetString(name, CultureInfo.InvariantCulture) ?? name;
 }

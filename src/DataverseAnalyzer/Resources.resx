@@ -109,4 +109,13 @@
   <data name="CT0005_Description" xml:space="preserve">
     <value>Having multiple constructor parameters of the same dependency injection type (Service, Repository, Handler, Provider, Factory, Manager, Client) can lead to confusion and accidental parameter swapping.</value>
   </data>
+  <data name="CT0006_Title" xml:space="preserve">
+    <value>Plugin class missing XML documentation summary</value>
+  </data>
+  <data name="CT0006_MessageFormat" xml:space="preserve">
+    <value>Plugin class '{0}' should have a short XML documentation summary describing its purpose</value>
+  </data>
+  <data name="CT0006_Description" xml:space="preserve">
+    <value>Classes that inherit from Plugin should have a short XML summary comment explaining what the plugin does.</value>
+  </data>
 </root>
