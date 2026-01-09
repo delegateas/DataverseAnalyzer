@@ -127,4 +127,31 @@
   <data name="CT0007_Description" xml:space="preserve">
     <value>Entity types should use the type-safe ContainsAttributes method with lambda expressions instead of the string-based Contains method to enable compile-time checking of attribute names.</value>
   </data>
+  <data name="CT0008_Title" xml:space="preserve">
+    <value>AddFilteredAttributes not allowed on Create operations</value>
+  </data>
+  <data name="CT0008_MessageFormat" xml:space="preserve">
+    <value>AddFilteredAttributes cannot be used with Create operations because it has no effect</value>
+  </data>
+  <data name="CT0008_Description" xml:space="preserve">
+    <value>Create operations do not support filtered attributes. It has no effect on whether the step gets triggered</value>
+  </data>
+  <data name="CT0009_Title" xml:space="preserve">
+    <value>PreImage not allowed on Create operations</value>
+  </data>
+  <data name="CT0009_MessageFormat" xml:space="preserve">
+    <value>AddImage with {0} cannot be used with Create operations because no previous record state exists</value>
+  </data>
+  <data name="CT0009_Description" xml:space="preserve">
+    <value>Create operations cannot have pre-images because the record does not exist before the create operation. ImageType.Both is also invalid as it includes PreImage.</value>
+  </data>
+  <data name="CT0010_Title" xml:space="preserve">
+    <value>PostImage not allowed on Delete operations</value>
+  </data>
+  <data name="CT0010_MessageFormat" xml:space="preserve">
+    <value>AddImage with {0} cannot be used with Delete operations because no record state exists after deletion</value>
+  </data>
+  <data name="CT0010_Description" xml:space="preserve">
+    <value>Delete operations cannot have post-images because the record no longer exists after the delete operation. ImageType.Both is also invalid as it includes PostImage.</value>
+  </data>
 </root>
