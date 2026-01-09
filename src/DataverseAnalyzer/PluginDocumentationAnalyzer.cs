@@ -39,7 +39,7 @@ public sealed class PluginDocumentationAnalyzer : DiagnosticAnalyzer
     {
         var classDeclaration = (ClassDeclarationSyntax)context.Node;
 
-        if (!InheritsFromPlugin(classDeclaration))
+        if (!ImplementsIPlugin(context, classDeclaration))
             return;
 
         if (HasValidDocumentation(classDeclaration))
@@ -53,29 +53,20 @@ public sealed class PluginDocumentationAnalyzer : DiagnosticAnalyzer
         context.ReportDiagnostic(diagnostic);
     }
 
-    private static bool InheritsFromPlugin(ClassDeclarationSyntax classDeclaration)
+    private static bool ImplementsIPlugin(SyntaxNodeAnalysisContext context, ClassDeclarationSyntax classDeclaration)
     {
-        if (classDeclaration.BaseList is null)
+        var symbol = context.SemanticModel.GetDeclaredSymbol(classDeclaration);
+        if (symbol is null)
             return false;
 
-        foreach (var baseType in classDeclaration.BaseList.Types)
+        foreach (var implementedInterface in symbol.AllInterfaces)
         {
-            var typeName = GetBaseTypeName(baseType.Type);
-            if (typeName == "Plugin")
+            var namespaceName = implementedInterface.ContainingNamespace?.ToDisplayString();
+            if (namespaceName == "Microsoft.Xrm.Sdk" && implementedInterface.Name == "IPlugin")
                 return true;
         }
 
         return false;
-    }
-
-    private static string? GetBaseTypeName(TypeSyntax type)
-    {
-        return type switch
-        {
-            IdentifierNameSyntax identifier => identifier.Identifier.ValueText,
-            QualifiedNameSyntax qualified => qualified.Right.Identifier.ValueText,
-            _ => null,
-        };
     }
 
     private static bool HasValidDocumentation(ClassDeclarationSyntax classDeclaration)
