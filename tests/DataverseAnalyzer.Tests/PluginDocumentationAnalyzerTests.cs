@@ -7,11 +7,37 @@ namespace DataverseAnalyzer.Tests;
 
 public sealed class PluginDocumentationAnalyzerTests
 {
+    private const string IPluginDefinition = """
+        namespace Microsoft.Xrm.Sdk
+        {
+            public interface IPlugin
+            {
+                void Execute(System.IServiceProvider serviceProvider);
+            }
+        }
+        """;
+
+    private const string DocumentedPluginBase = """
+
+        /// <summary>Base plugin class.</summary>
+        class Plugin : Microsoft.Xrm.Sdk.IPlugin
+        {
+            public void Execute(System.IServiceProvider serviceProvider) { }
+        }
+        """;
+
+    private const string UndocumentedPluginBase = """
+
+        class Plugin : Microsoft.Xrm.Sdk.IPlugin
+        {
+            public void Execute(System.IServiceProvider serviceProvider) { }
+        }
+        """;
+
     [Fact]
     public async Task PluginSubclassWithoutXmlCommentShouldTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             class MyPlugin : Plugin { }
             """;
@@ -24,8 +50,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassWithEmptySummaryShouldTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             /// <summary></summary>
             class MyPlugin : Plugin { }
@@ -39,8 +64,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassWithWhitespaceSummaryShouldTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             /// <summary>   </summary>
             class MyPlugin : Plugin { }
@@ -54,8 +78,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassWithValidSummaryShouldNotTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             /// <summary>Handles account creation.</summary>
             class CreateAccountPlugin : Plugin { }
@@ -68,8 +91,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassWithMultiLineSummaryShouldNotTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             /// <summary>
             /// Handles account creation and validation.
@@ -108,8 +130,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassWithOnlyRemarksShouldTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             /// <remarks>Some remarks here.</remarks>
             class MyPlugin : Plugin { }
@@ -123,8 +144,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassWithInheritdocShouldNotTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             /// <inheritdoc/>
             class MyPlugin : Plugin { }
@@ -137,8 +157,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassWithInheritdocCrefShouldNotTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             /// <inheritdoc cref="Plugin"/>
             class MyPlugin : Plugin { }
@@ -151,8 +170,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task MultiplePluginSubclassesWithMixedDocsShouldTriggerOnlyForMissing()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             class UndocumentedPlugin : Plugin { }
 
@@ -170,10 +188,15 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassWithQualifiedBaseTypeShouldTrigger()
     {
-        var source = """
+        var source = IPluginDefinition + """
+
             namespace MyNamespace
             {
-                class Plugin { }
+                /// <summary>Base plugin.</summary>
+                class Plugin : Microsoft.Xrm.Sdk.IPlugin
+                {
+                    public void Execute(System.IServiceProvider serviceProvider) { }
+                }
             }
 
             class MyPlugin : MyNamespace.Plugin { }
@@ -187,10 +210,15 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassWithQualifiedBaseTypeAndSummaryShouldNotTrigger()
     {
-        var source = """
+        var source = IPluginDefinition + """
+
             namespace MyNamespace
             {
-                class Plugin { }
+                /// <summary>Base plugin.</summary>
+                class Plugin : Microsoft.Xrm.Sdk.IPlugin
+                {
+                    public void Execute(System.IServiceProvider serviceProvider) { }
+                }
             }
 
             /// <summary>My plugin.</summary>
@@ -204,8 +232,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task NestedPluginSubclassShouldTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             class OuterClass
             {
@@ -221,8 +248,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task NestedPluginSubclassWithSummaryShouldNotTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             class OuterClass
             {
@@ -236,14 +262,13 @@ public sealed class PluginDocumentationAnalyzerTests
     }
 
     [Fact]
-    public async Task PluginBaseClassItselfShouldNotTrigger()
+    public async Task PluginBaseClassItselfShouldTrigger()
     {
-        var source = """
-            class Plugin { }
-            """;
+        var source = IPluginDefinition + UndocumentedPluginBase;
 
         var diagnostics = await GetDiagnosticsAsync(source);
-        Assert.Empty(diagnostics);
+        Assert.Single(diagnostics);
+        Assert.Equal("CT0006", diagnostics[0].Id);
     }
 
     [Fact]
@@ -260,8 +285,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassWithSummaryAndOtherTagsShouldNotTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             /// <summary>Handles account creation.</summary>
             /// <remarks>Additional details here.</remarks>
@@ -275,8 +299,8 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassImplementingInterfaceShouldTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
+
             interface IMyInterface { }
 
             class MyPlugin : Plugin, IMyInterface { }
@@ -290,8 +314,8 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task PluginSubclassImplementingInterfaceWithSummaryShouldNotTrigger()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
+
             interface IMyInterface { }
 
             /// <summary>My plugin.</summary>
@@ -305,8 +329,7 @@ public sealed class PluginDocumentationAnalyzerTests
     [Fact]
     public async Task DiagnosticContainsClassName()
     {
-        var source = """
-            class Plugin { }
+        var source = IPluginDefinition + DocumentedPluginBase + """
 
             class TestPluginName : Plugin { }
             """;
@@ -314,6 +337,51 @@ public sealed class PluginDocumentationAnalyzerTests
         var diagnostics = await GetDiagnosticsAsync(source);
         Assert.Single(diagnostics);
         Assert.Contains("TestPluginName", diagnostics[0].GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ClassDirectlyImplementingIPluginShouldTrigger()
+    {
+        var source = IPluginDefinition + """
+
+            class MyDirectPlugin : Microsoft.Xrm.Sdk.IPlugin
+            {
+                public void Execute(System.IServiceProvider serviceProvider) { }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Single(diagnostics);
+        Assert.Equal("CT0006", diagnostics[0].Id);
+    }
+
+    [Fact]
+    public async Task ClassDirectlyImplementingIPluginWithSummaryShouldNotTrigger()
+    {
+        var source = IPluginDefinition + """
+
+            /// <summary>Direct IPlugin implementation.</summary>
+            class MyDirectPlugin : Microsoft.Xrm.Sdk.IPlugin
+            {
+                public void Execute(System.IServiceProvider serviceProvider) { }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Empty(diagnostics);
+    }
+
+    [Fact]
+    public async Task ClassInheritingFromNonIPluginPluginClassShouldNotTrigger()
+    {
+        var source = """
+            class Plugin { }
+
+            class MyPlugin : Plugin { }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source);
+        Assert.Empty(diagnostics);
     }
 
     private static async Task<Diagnostic[]> GetDiagnosticsAsync(string source)
