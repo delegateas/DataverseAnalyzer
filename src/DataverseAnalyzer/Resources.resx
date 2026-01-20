@@ -154,4 +154,22 @@
   <data name="CT0010_Description" xml:space="preserve">
     <value>Delete operations cannot have post-images because the record no longer exists after the delete operation. ImageType.Both is also invalid as it includes PostImage.</value>
   </data>
+  <data name="CT0011_Title" xml:space="preserve">
+    <value>GetTarget result must be assigned to variable named 'target'</value>
+  </data>
+  <data name="CT0011_MessageFormat" xml:space="preserve">
+    <value>Variable '{0}' should be named 'target' when assigned from GetTarget&lt;T&gt;()</value>
+  </data>
+  <data name="CT0011_Description" xml:space="preserve">
+    <value>When calling context.GetTarget&lt;T&gt;(), the result should be assigned to a local variable named 'target' for consistency and readability.</value>
+  </data>
+  <data name="CT0012_Title" xml:space="preserve">
+    <value>GetTargetMergedWithPreImage result must be assigned to variable named 'merged'</value>
+  </data>
+  <data name="CT0012_MessageFormat" xml:space="preserve">
+    <value>Variable '{0}' should be named 'merged' when assigned from GetTargetMergedWithPreImage&lt;T&gt;()</value>
+  </data>
+  <data name="CT0012_Description" xml:space="preserve">
+    <value>When calling context.GetTargetMergedWithPreImage&lt;T&gt;(), the result should be assigned to a local variable named 'merged' for consistency and readability. Using 'target' is specifically prohibited to avoid confusion.</value>
+  </data>
 </root>
