@@ -16,6 +16,8 @@ A Roslyn analyzer enforcing coding standards for Dataverse/.NET projects.
 | CT0008 | AddFilteredAttributes not allowed on Create | Usage | Error |
 | CT0009 | PreImage not allowed on Create | Usage | Error |
 | CT0010 | PostImage not allowed on Delete | Usage | Error |
+| CT0011 | GetTarget result must be named 'target' | Naming | Warning |
+| CT0012 | GetTargetMergedWithPreImage result must be named 'merged' | Naming | Warning |
 
 ## Style Rules
 
@@ -133,6 +135,34 @@ public class UpdateAccountPlugin : IPlugin { }
 
 // Not allowed - triggers CT0006
 public class UpdateAccountPlugin : IPlugin { }
+```
+
+## Naming Rules
+
+### CT0011: GetTarget Variable Naming
+
+When calling `context.GetTarget<T>()`, the result must be assigned to a variable named `target`.
+
+```csharp
+// Allowed
+var target = context.GetTarget<Account>();
+
+// Not allowed - triggers CT0011
+var entity = context.GetTarget<Account>();
+var account = context.GetTarget<Account>();
+```
+
+### CT0012: GetTargetMergedWithPreImage Variable Naming
+
+When calling `context.GetTargetMergedWithPreImage<T>()`, the result must be assigned to a variable named `merged`.
+
+```csharp
+// Allowed
+var merged = context.GetTargetMergedWithPreImage<Account>();
+
+// Not allowed - triggers CT0012
+var entity = context.GetTargetMergedWithPreImage<Account>();
+var target = context.GetTargetMergedWithPreImage<Account>();  // 'target' is specifically prohibited
 ```
 
 ## Usage
