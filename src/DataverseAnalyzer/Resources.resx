@@ -172,4 +172,13 @@
   <data name="CT0012_Description" xml:space="preserve">
     <value>Classes containing Azure Function trigger methods should have a short XML summary comment explaining what the function class does.</value>
   </data>
+  <data name="CT0013_Title" xml:space="preserve">
+    <value>EntityCollection should have EntityName set</value>
+  </data>
+  <data name="CT0013_MessageFormat" xml:space="preserve">
+    <value>EntityCollection should have EntityName set via the constructor or object initializer</value>
+  </data>
+  <data name="CT0013_Description" xml:space="preserve">
+    <value>EntityCollection instances used with bulk operations (CreateMultiple, UpdateMultiple, DeleteMultiple) require EntityName to be set. Always set EntityName via the constructor parameter or object initializer to prevent runtime errors.</value>
+  </data>
 </root>
